@@ -1,0 +1,102 @@
+#modify include
+s/^#include "\([a-zA-Z][a-zA-Z]*\)"/#include <\1>/g
+
+#convert from windows to linux line endings
+s/\r//g
+
+#trim trailing spaces
+s/\s*$//g
+
+#convert tab characters to space
+s/\t/    /g
+
+#remove excess newlines
+N;/^\n$/d;P;D;
+
+#no space before "<"
+s/\([a-zA-Z]\) <\([a-zA-Z]\)/\1<\2/g
+
+#space after ">"
+s/>\s*\([a-zA-Z0-9]\)/> \1/g
+
+#">>" to "> >"
+s/>>/> >/g
+
+#std standard types
+s/string \(.*\)"\(.*\)"/std::string \1"\2"/g
+s/\(.*\)string*\(.*\)> /\1std::string\2> /g
+s/string, /std::string, /g
+s/map<\([a-zA-Z]\)/std::map<\1/g
+s/list<\([a-zA-Z]\)/std::list<\1/g
+s/shared_ptr<\([a-zA-Z]\)/std::shared_ptr<\1/g
+s/cout\(\s*\)<</std::cout <</g
+s/<<\(\s*\)endl/<<\1std::endl/g
+
+#space after comma
+s/,\([a-zA-Z]\)/, \1/g
+
+#space before and after mathematical operators
+s/\([^= ]\)=\([^= ]\)/\1 = \2/
+s/\([^% ]\)%\([^% ]\)/\1 % \2/
+
+#no space before and after open parenthesis
+s/\([a-zA-Z0-9]\)\s*(\s*\([a-zA-Z0-9]\)/\1(\2/g
+
+#no space before close parenthesis
+s/\([a-zA-Z0-9]\)\s*)/\1)/g
+
+#no newline before close parenthesis
+/([^)]*$/,/\s*)/ {/^\s*$/d}
+/([^)]*$/ N;s:(\([a-zA-Z0-9]*\).*\n\{1,\}\s*):(\1):
+
+#no spaces between ")" and ";"
+s/)\s*;/);/g
+
+#convert suffix to prefix
+s/\([a-zA-Z]\)++/++\1/g
+s/\([a-zA-Z]\)--/--\1/g
+
+#space between (for, if, while) and "("
+s/\<for\>(/for (/g
+s/\<if\>(/if (/g
+s/\<while\>(/while (/g
+
+#space before and after comparators not inside string
+/[^"].*[><!=]=[^"]*$/ s/\([><=!]\)=/ \1= /g
+
+#no newlines between two "}"
+/}/,/}/ N;s/}\n\s*$/}/g
+
+
+executable:
+sed -i 's/^#include "\([a-zA-Z][a-zA-Z]*\)"/#include <\1>/g' main.cpp
+sed -i 's/\r//g' main.cpp
+sed -i 's/\s*$//g' main.cpp
+sed -i 's/\t/    /g' main.cpp
+sed -i 'N;/^\n$/d;P;D;' main.cpp
+sed -i 's/\([a-zA-Z]\) <\([a-zA-Z]\)/\1<\2/g' main.cpp
+sed -i 's/>\s*\([a-zA-Z0-9]\)/> \1/g' main.cpp
+sed -i 's/>>/> >/g' main.cpp
+sed -i 's/,\([a-zA-Z]\)/, \1/g' main.cpp
+sed -i 's/string \(.*\)"\(.*\)"/std::string \1"\2"/g' main.cpp
+sed -i 's/\(.*\)string*\(.*\)> /\1std::string\2> /g' main.cpp
+sed -i 's/string, /std::string, /g' main.cpp
+sed -i 's/map<\([a-zA-Z]\)/std::map<\1/g' main.cpp
+sed -i 's/list<\([a-zA-Z]\)/std::list<\1/g' main.cpp
+sed -i 's/shared_ptr<\([a-zA-Z]\)/std::shared_ptr<\1/g' main.cpp
+sed -i 's/cout\(\s*\)<</std::cout <</g' main.cpp
+sed -i 's/<<\(\s*\)endl/<<\1std::endl/g' main.cpp
+sed -i 's/\([^= ]\)=\([^= ]\)/\1 = \2/' main.cpp
+sed -i 's/\([^% ]\)%\([^% ]\)/\1 % \2/' main.cpp
+sed -i 's/\([a-zA-Z0-9]\)\s*(\s*\([a-zA-Z0-9]\)/\1(\2/g' main.cpp
+sed -i 's/\([a-zA-Z0-9]\)\s*)/\1)/g' main.cpp
+sed -i '/([^)]*$/,/\s*)/ {/^\s*$/d}' main.cpp
+sed -i '/([^)]*$/ N;s:(\([a-zA-Z0-9]*\).*\n\{1,\}\s*):(\1):' main.cpp
+sed -i 's/)\s*;/);/g' main.cpp
+sed -i 's/\([a-zA-Z]\)++/++\1/g' main.cpp
+sed -i 's/\([a-zA-Z]\)--/--\1/g' main.cpp
+sed -i 's/\<for\>(/for (/g' main.cpp
+sed -i 's/\<if\>(/if (/g' main.cpp
+sed -i 's/\<while\>(/while (/g' main.cpp
+sed -i '/[^"].*[><!=]=[^"]*$/ s/\([><=!]\)=/ \1= /g' main.cpp
+sed -i '/}/,/}/ N;s/}\n\s*$/}/g' main.cpp
